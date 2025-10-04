@@ -17,11 +17,11 @@ import { auth, db } from "../firebaseConfig";
 export default function AddContact() {
   const router = useRouter();
   const [searchEmail, setSearchEmail] = useState("");
-  const [results, setResults] = useState<any[]>([]);
-  const [nicknameMap, setNicknameMap] = useState<{ [key: string]: string }>({});
+  const [results, setResults] = useState([]);
+  const [nicknameMap, setNicknameMap] = useState({});
 
   // Search users by email (starts-with)
-  const handleSearch = async (text: string) => {
+  const handleSearch = async (text) => {
     setSearchEmail(text);
     if (!text) {
       setResults([]);
@@ -36,21 +36,21 @@ export default function AddContact() {
     );
 
     const snapshot = await getDocs(q);
-    setResults(snapshot.docs.map((doc) => ({ uid: doc.id, ...doc.data() })));
+    setResults(snapshot.docs.map((doc) => Object.assign({ uid: doc.id }, doc.data())));
   };
 
-  const handleAdd = async (user: any) => {
+  const handleAdd = async (user) => {
     if (!auth.currentUser) return;
     try {
-      await addDoc(collection(db, `users/${auth.currentUser.uid}/contacts`), {
+      await addDoc(collection(db, "users/" + auth.currentUser.uid + "/contacts"), {
         uid: user.uid,
         email: user.email,
         name: nicknameMap[user.uid] || user.email,
       });
 
-      Alert.alert("Added", `${nicknameMap[user.uid] || user.email} saved!`);
+      Alert.alert("Added", (nicknameMap[user.uid] || user.email) + " saved!");
       router.replace("/contacts");
-    } catch (e: any) {
+    } catch (e) {
       Alert.alert("Error", e.message);
     }
   };
@@ -119,19 +119,19 @@ export default function AddContact() {
             </Text>
             <Text style={{ color: "#888", marginBottom: 8 }}>{item.email}</Text>
 
-            <TextInput
-              placeholder="Enter nickname"
-              value={nicknameMap[item.uid] || ""}
-              onChangeText={(text) =>
-                setNicknameMap((prev) => ({ ...prev, [item.uid]: text }))
-              }
-              style={{
-                backgroundColor: "#F0F0F0",
-                padding: 10,
-                borderRadius: 10,
-                marginBottom: 8,
-              }}
-            />
+      <TextInput
+        placeholder="Enter nickname"
+        value={nicknameMap[item.uid] || ""}
+        onChangeText={(text) =>
+          setNicknameMap(function (prev) { return Object.assign(Object.assign({}, prev), { [item.uid]: text }); })
+        }
+        style={{
+          backgroundColor: "#F0F0F0",
+          padding: 10,
+          borderRadius: 10,
+          marginBottom: 8,
+        }}
+      />
 
             <TouchableOpacity
               onPress={() => handleAdd(item)}

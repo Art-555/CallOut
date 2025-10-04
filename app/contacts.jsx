@@ -12,21 +12,14 @@ import { useEffect, useState } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { auth, db } from "../firebaseConfig";
 
-type Contact = {
-  id: string;
-  uid: string;
-  email: string;
-  name: string;
-};
-
 export default function Contacts() {
   const router = useRouter();
-  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [contacts, setContacts] = useState([]);
 
   const loadContacts = async () => {
     if (!auth.currentUser) return;
     const snapshot = await getDocs(
-      collection(db, `users/${auth.currentUser.uid}/contacts`)
+      collection(db, "users/" + auth.currentUser.uid + "/contacts")
     );
     setContacts(
       snapshot.docs.map((doc) => ({
@@ -42,9 +35,9 @@ export default function Contacts() {
     loadContacts();
   }, []);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id) => {
     if (!auth.currentUser) return;
-    await deleteDoc(doc(db, `users/${auth.currentUser.uid}/contacts/${id}`));
+    await deleteDoc(doc(db, "users/" + auth.currentUser.uid + "/contacts/" + id));
     loadContacts();
   };
 

@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+, "app/_layout.jsx", "app/addContact.jsx", "app/contacts.jsx", "app/dashboard.jsx", "app/editContact.jsx", "app/index.jsx", "app/login.jsx", "app/profile.jsx", "app/settings.jsx", "app/signup.jsx"  ]
 }

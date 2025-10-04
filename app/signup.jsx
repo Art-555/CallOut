@@ -32,7 +32,7 @@ export default function Signup() {
 
       Alert.alert("Success", "Account created!");
       router.replace("/login");
-    } catch (error: any) {
+    } catch (error) {
       Alert.alert("Signup failed", error.message);
     }
   };

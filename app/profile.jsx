@@ -7,11 +7,12 @@ import { auth, db } from "../firebaseConfig";
 export default function Profile() {
   const router = useRouter();
   const params = useLocalSearchParams(); // fixed hook
-  const contactUid = params.uid as string | undefined; // optional uid of contact
+  const contactUid = params.uid; // optional uid of contact
 
   const [email, setEmail] = useState("");
   const [medicalInfo, setMedicalInfo] = useState("");
   const [allergies, setAllergies] = useState("");
+  const [bloodType, setBloodType] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [canView, setCanView] = useState(true);
 
@@ -23,7 +24,7 @@ export default function Profile() {
 
       // Only allow viewing if it's your profile or you're in their contacts
       if (userId !== auth.currentUser.uid) {
-        const snapshot = await getDocs(collection(db, `users/${userId}/contacts`));
+        const snapshot = await getDocs(collection(db, "users/" + userId + "/contacts"));
         const contactEmails = snapshot.docs.map((doc) => doc.data().email);
         if (!contactEmails.includes(auth.currentUser.email || "")) {
           Alert.alert("Access Denied", "You are not allowed to view this profile.");
@@ -41,6 +42,7 @@ export default function Profile() {
         setEmail(data.email || "");
         setMedicalInfo(data.medicalInfo || "");
         setAllergies(data.allergies || "");
+        setBloodType(data.bloodType || "");
       }
     };
 
@@ -54,12 +56,12 @@ export default function Profile() {
     try {
       await setDoc(
         doc(db, "users", userId),
-        { medicalInfo, allergies, email },
+        { medicalInfo, allergies, email, bloodType },
         { merge: true }
       );
       Alert.alert("Success", "Profile updated!");
       setIsEditing(false);
-    } catch (e: any) {
+    } catch (e) {
       Alert.alert("Error", e.message);
     }
   };
@@ -105,12 +107,31 @@ export default function Profile() {
             borderColor: "#ccc",
             borderRadius: 8,
             padding: 10,
+            marginBottom: 15,
+            backgroundColor: "#fff",
+          }}
+        />
+      ) : (
+        <Text style={{ marginBottom: 15 }}>{allergies || "Not set"}</Text>
+      )}
+
+      <Text style={{ marginBottom: 5, fontWeight: "bold" }}>Blood Type</Text>
+      {isEditing ? (
+        <TextInput
+          value={bloodType}
+          onChangeText={setBloodType}
+          placeholder="e.g. O+, A-, etc."
+          style={{
+            borderWidth: 1,
+            borderColor: "#ccc",
+            borderRadius: 8,
+            padding: 10,
             marginBottom: 20,
             backgroundColor: "#fff",
           }}
         />
       ) : (
-        <Text style={{ marginBottom: 20 }}>{allergies || "Not set"}</Text>
+        <Text style={{ marginBottom: 20 }}>{bloodType || "Not set"}</Text>
       )}
 
       {userId === auth.currentUser?.uid && (

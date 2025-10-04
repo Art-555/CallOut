@@ -18,7 +18,7 @@ export default function Dashboard() {
     if (!auth.currentUser) return;
 
     const snapshot = await getDocs(
-      collection(db, `users/${auth.currentUser.uid}/contacts`)
+      collection(db, "users/" + auth.currentUser.uid + "/contacts")
     );
 
     const latestContacts = snapshot.docs.map((doc) => ({
@@ -34,16 +34,16 @@ export default function Dashboard() {
     const names = latestContacts.map((c) => c.name).join(", ");
 
     // Mobile alert
-    Alert.alert("🚨 SOS Sent!", `Notified: ${names}`);
+    Alert.alert("🚨 SOS Sent!", "Notified: " + names);
 
     // Web alert fallback
     if (typeof window !== "undefined") {
-      window.alert(`🚨 SOS Sent! Notified: ${names}`);
+      window.alert("🚨 SOS Sent! Notified: " + names);
     }
 
     console.log(
       "📢 SOS sent to:",
-      latestContacts.map((c) => `${c.name} <${c.email}>`).join(", ")
+      latestContacts.map((c) => c.name + " <" + c.email + ">").join(", ")
     );
   };
 
@@ -62,7 +62,7 @@ export default function Dashboard() {
 
       {/* SOS Button (Top) */}
       <TouchableOpacity
-        onPress={handleSOS}
+        onPress={() => router.push("/SOSScreen")}
         style={{
           backgroundColor: "#FF5252",
           padding: 20,

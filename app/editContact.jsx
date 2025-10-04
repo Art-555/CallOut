@@ -14,13 +14,13 @@ import { auth, db } from "../firebaseConfig";
 
 export default function EditContact() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>(); // ✅ correct way
+  const { id } = useLocalSearchParams(); // removed type annotation
   const [name, setName] = useState("");
 
   useEffect(() => {
     const loadContact = async () => {
       if (!auth.currentUser || !id) return;
-      const ref = doc(db, `users/${auth.currentUser.uid}/contacts/${id}`);
+      const ref = doc(db, "users/" + auth.currentUser.uid + "/contacts/" + id);
       const snap = await getDoc(ref);
       if (snap.exists()) setName(snap.data().name);
     };
@@ -30,11 +30,11 @@ export default function EditContact() {
   const handleUpdate = async () => {
     if (!auth.currentUser || !id) return;
     try {
-      const ref = doc(db, `users/${auth.currentUser.uid}/contacts/${id}`);
+      const ref = doc(db, "users/" + auth.currentUser.uid + "/contacts/" + id);
       await updateDoc(ref, { name });
       Alert.alert("Updated", "Contact updated!");
       router.back();
-    } catch (e: any) {
+    } catch (e) {
       Alert.alert("Error", e.message);
     }
   };

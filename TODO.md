@@ -1,0 +1,4 @@
+- [x] Add imports for PNG icons and Image component at the top of SOSScreen.jsx
+- [x] Update EMERGENCY_CATEGORIES array to use imported icons
+- [x] Replace Text icon with Image component in the button render
+- [x] Update styles.icon for proper sizing
